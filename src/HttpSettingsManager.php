@@ -66,6 +66,10 @@ class HttpSettingsManager
      */
     public function getProxy()
     {
+        if (count($this->proxies) === 0) {
+            return null;
+        }
+
         $key = array_rand($this->proxies);
         return $this->lastProxy = $this->proxies[$key];
     }

@@ -32,7 +32,7 @@ class ProxyStatusCommand extends ContainerAwareCommand
         $activeIp = trim($clientFactory->createClient()->get('http://api.ipify.org')->getBody());
 
         $output->writeln('<comment>Proxy status</comment>');
-        $output->writeln(' - <info>Current proxy:</info>    ' . $settingsManager->getLastProxy() ? :'none');
+        $output->writeln(' - <info>Current proxy:</info>    ' . ($settingsManager->getLastProxy() ? : 'none'));
 
         $output->writeln('<comment>IP addresses</comment>');
         $output->writeln(' - <info>Public IP:</info>        ' . $localIp);
