@@ -23,8 +23,6 @@ To use the newest (maybe unstable) version please add following into your compos
 }
 ```
 
-## Usage
-
 Load bundle in AppKernel.php:
 ``` php
 
@@ -37,6 +35,8 @@ Load bundle in AppKernel.php:
         ];
     }
 ```
+
+## Configuration
 
 Configure in app/config/parameters.yml:
 
@@ -86,6 +86,14 @@ parameters:
 ```
 
 When providing multiple proxies a random one will be select each time creating a new client
+
+## Usage
+
+``` php
+
+$ip = $this->get('glooby.http.client')->get('http://api.ipify.org')->getBody();
+
+```
 
 ## Support
 
