@@ -28,15 +28,11 @@ class ProxyStatusCommand extends ContainerAwareCommand
         $settingsManager = $this->getContainer()->get('glooby.http.settings');
         $clientFactory = $this->getContainer()->get('glooby.http.client_factory');
 
-        $proxy = ($settingsManager->getProxy()) ? :'none';
-        $proxyFile = $settingsManager->getProxyFile() ? :'none';
-
         $localIp = trim(file_get_contents('http://api.ipify.org'));
         $activeIp = trim($clientFactory->createClient()->get('http://api.ipify.org')->getBody());
 
         $output->writeln('<comment>Proxy status</comment>');
-        $output->writeln(' - <info>Current proxy:</info>    ' . $proxy);
-        $output->writeln(' - <info>Proxyfile:</info>        ' . $proxyFile);
+        $output->writeln(' - <info>Current proxy:</info>    ' . $settingsManager->getLastProxy() ? :'none');
 
         $output->writeln('<comment>IP addresses</comment>');
         $output->writeln(' - <info>Public IP:</info>        ' . $localIp);

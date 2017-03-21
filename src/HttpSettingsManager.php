@@ -10,13 +10,14 @@ use Glooby\HttpClientBundle\Proxy\ProxyParser;
  */
 class HttpSettingsManager
 {
+    /** @var int */
     private $timeout;
 
-    /** @var Proxy|null */
-    private $proxy;
+    /** @var Proxy[] */
+    private $proxies = [];
 
-    /** @var string|null */
-    private $proxyFile;
+    /** @var Proxy */
+    private $lastProxy;
 
     /** @var ProxyParser */
     private $proxyParser;
@@ -40,35 +41,41 @@ class HttpSettingsManager
     /**
      * Set the currently active global proxy, or null if no proxy is in use.
      *
-     * @param null|string $string
+     * @param null|string|array|Proxy $proxy
      */
-    public function setProxy($string)
+    public function addProxy($proxy)
     {
-        if ($string) {
-            $proxy = $this->proxyParser->parse($string);
-            $this->proxy = $proxy;
+        if (is_string($proxy)) {
+            if (ProxyParser::validProxyString($proxy)) {
+                $this->proxies[] = $this->proxyParser->parse($proxy);
+            } elseif (file_exists($proxy)) {
+                $this->proxies = array_merge(
+                    $this->proxies,
+                    $this->proxyParser->parseFile($proxy)
+                );
+            }
+        } elseif (is_array($proxy)) {
+            array_map([$this, 'addProxy'], $proxy);
+        } elseif ($proxy instanceof Proxy) {
+            $this->proxies[] = $proxy;
         }
     }
 
     /**
-     * @param null|string $proxyFile
+     * @return Proxy|null
      */
-    public function setProxyFile($proxyFile)
+    public function getProxy()
     {
-        $this->proxyFile = $proxyFile;
-
-        if ($proxyFile) {
-            $proxy = $this->proxyParser->parseFile($proxyFile);
-            $this->proxy = $proxy;
-        }
+        $key = array_rand($this->proxies);
+        return $this->lastProxy = $this->proxies[$key];
     }
 
     /**
      * @return Proxy
      */
-    public function getProxy()
+    public function getLastProxy()
     {
-        return $this->proxy;
+        return $this->lastProxy;
     }
 
     /**
@@ -77,21 +84,5 @@ class HttpSettingsManager
     public function getTimeout()
     {
         return $this->timeout;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getProxyFile()
-    {
-        return $this->proxyFile;
-    }
-
-    /**
-     * @return ProxyParser
-     */
-    public function getProxyParser()
-    {
-        return $this->proxyParser;
     }
 }

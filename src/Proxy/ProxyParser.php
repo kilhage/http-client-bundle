@@ -12,6 +12,15 @@ class ProxyParser
 
     /**
      * @param string $string
+     * @return int
+     */
+    public static function validProxyString($string)
+    {
+        return preg_match(self::VALID_PROXY_REGEX, $string);
+    }
+
+    /**
+     * @param string $string
      * @return Proxy
      */
     public function parse($string)
@@ -63,19 +72,22 @@ class ProxyParser
 
     /**
      * @param string $file
-     * @return Proxy|null
+     * @return Proxy[]
      */
     public function parseFile($file)
     {
+        $proxies = [];
         if (null !== $file) {
             // If the proxy file is set, we check if it exists, and if so read the proxy from it.
             if (file_exists($file)) {
-                $proxy = trim(file_get_contents($file));
+                $content = trim(file_get_contents($file));
 
-                return $this->parse($proxy);
+                foreach (explode("\n", $content) as $string) {
+                    $proxies[] = $this->parse($string);
+                }
             }
         }
 
-        return null;
+        return $proxies;
     }
 }

@@ -1,12 +1,9 @@
 parameters:
     # proxy to use, f.ex. socks5://127.0.0.1:9999
+    # could also be a path to where a file can be used, containing proxy information.
     glooby.http.proxy:      ~
 
-    # path to where a file can be used, containing the above information.
-    # If glooby.http.proxyfile is set it will override the path.
-    glooby.http.proxyfile:  ~
-
-    # default timeout to use in secounds
+    # default timeout to use in seconds
     glooby.http.timeout:  ~
 
 services:
@@ -29,8 +26,7 @@ services:
         class: Glooby\HttpClientBundle\HttpSettingsManager
         calls:
             - [setProxyParser,       ['@glooby.http.proxy_parser']]
-            - [setProxy,             ['%glooby.http.proxy%']]
-            - [setProxyFile,         ['%glooby.http.proxyfile%']]
+            - [addProxy,             ['%glooby.http.proxy%']]
             - [setTimeout,           ['%glooby.http.timeout%']]
 
     glooby.http.client:

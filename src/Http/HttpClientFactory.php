@@ -58,22 +58,31 @@ class HttpClientFactory implements LoggerAwareInterface, ClientFactoryInterface
 
     /**
      * @param array $config
+     * @return array
+     */
+    public function createConfig(array $config = [])
+    {
+        $config = $this->buildDefaults($config);
+        $config = $this->configureProxy($config);
+        return $config;
+    }
+
+    /**
+     * @param array $config
      *
      * @return Client
      */
     public function createClient(array $config = [])
     {
-        $defaults = $this->buildDefaults($config);
-        $guzzle = new Client($defaults);
-        $this->configure($guzzle, $config);
-        return $guzzle;
+        $config = $this->createConfig($config);
+        return new Client($config);
     }
 
     /**
-     * @param Client $guzzle
      * @param array $config
+     * @return array
      */
-    private function configure(Client $guzzle, array $config)
+    private function configureProxy(array $config)
     {
         $proxy = $this->settingsManager->getProxy();
 
@@ -82,23 +91,21 @@ class HttpClientFactory implements LoggerAwareInterface, ClientFactoryInterface
                 $this->logger->debug("Creating new Guzzle client (default proxy: {$proxy->getUrl()})", $config);
             }
 
-            $guzzle->setDefaultOption('proxy', [
-                'http' => $proxy->getUrl(),
-                'https' => $proxy->getUrl()
-            ]);
+            $config['proxy']['http'] = $proxy->getUrl();
+            $config['proxy']['https'] = $proxy->getUrl();
 
             switch ($proxy->getScheme()) {
                 case 'socks5':
                 case 'socks5a':
                 case 'socks5h':
-                    $guzzle->setDefaultOption('config/curl/' . CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
+                $config['config/curl/'.CURLOPT_PROXYTYPE] = CURLPROXY_SOCKS5;
                     break;
                 case 'socks4':
-                    $guzzle->setDefaultOption('config/curl/' . CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
+                    $config['config/curl/'.CURLOPT_PROXYTYPE] = CURLPROXY_SOCKS4;
                     break;
                 case 'http':
                 case 'https':
-                    $guzzle->setDefaultOption('config/curl/' . CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+                    $config['config/curl/'.CURLOPT_PROXYTYPE] = CURLPROXY_HTTP;
                     break;
                 default:
                     throw new \InvalidArgumentException('Unsupported proxy scheme: '.$proxy->getScheme());
@@ -108,6 +115,8 @@ class HttpClientFactory implements LoggerAwareInterface, ClientFactoryInterface
                 $this->logger->debug("Creating new Guzzle client (no proxy)", $config);
             }
         }
+
+        return $config;
     }
 
     /**
