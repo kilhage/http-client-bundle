@@ -1,1 +1,1 @@
-# template-bundle
+# http-client-bundle

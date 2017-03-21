@@ -1,8 +1,8 @@
 {
-    "name": "glooby/template-bundle",
-    "license": "proprietary",
+    "name": "glooby/http-client-bundle",
+    "license": "MIT",
     "type": "symfony-bundle",
-    "description": "template-bundle",
+    "description": "http-client-bundle",
     "authors": [
         {
             "name": "Emil Kilhage",
@@ -10,9 +10,11 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Glooby\\TemplateBundle\\": "src/" }
+        "psr-4": { "Glooby\\ttpClientBundle\\": "src/" }
     },
     "require": {
-        "php": ">=5.6"
+        "php": ">=5.6",
+        "symfony/symfony": "~2.8|~3.0",
+        "guzzlehttp/guzzle": "~5.2|~6.2"
     }
 }
