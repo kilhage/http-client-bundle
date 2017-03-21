@@ -15,7 +15,7 @@ trait HttpClientFactoryAwareTrait
     /**
      * @param HttpClientFactory $httpClientFactory
      */
-    public function setHttpClientFactory($httpClientFactory)
+    public function setHttpClientFactory(HttpClientFactory $httpClientFactory)
     {
         $this->httpClientFactory = $httpClientFactory;
     }

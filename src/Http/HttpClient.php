@@ -2,6 +2,7 @@
 
 namespace Glooby\HttpClientBundle\Http;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareTrait;
 
 /**
@@ -31,7 +32,7 @@ class HttpClient
      * @param string $url
      * @param array $params
      * @param array $options
-     * @return \GuzzleHttp\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function get($url, array $params = [], array $options = [])
     {
@@ -46,7 +47,7 @@ class HttpClient
      * @param string $url
      * @param array $params
      * @param array $options
-     * @return \GuzzleHttp\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function post($url, array $params = [], array $options = [])
     {
@@ -61,7 +62,7 @@ class HttpClient
      * @param string $url
      * @param array $params
      * @param array $options
-     * @return \GuzzleHttp\Message\ResponseInterface
+     * @return ResponseInterface
      */
     public function put($url, array $params = [], array $options = [])
     {
@@ -75,7 +76,7 @@ class HttpClient
     /**
      * @return \GuzzleHttp\Client
      */
-    protected function createClient() : \GuzzleHttp\Client
+    protected function createClient()
     {
         return $this->httpClientFactory->createClient();
     }
@@ -84,7 +85,7 @@ class HttpClient
      * @param array $params
      * @return array
      */
-    protected function addDefaultParams(array $params = []) : array
+    protected function addDefaultParams(array $params = [])
     {
         if (null !== $this->defaultParams) {
             $params = array_merge($this->defaultParams, $params);
@@ -97,7 +98,7 @@ class HttpClient
      * @param array $options
      * @return array
      */
-    protected function getDefaultOptions(array $options = []) : array
+    protected function getDefaultOptions(array $options = [])
     {
         if (null !== $this->defaultOptions) {
             $options = array_merge($this->defaultOptions, $options);
@@ -111,7 +112,7 @@ class HttpClient
      * @param array $params
      * @return string
      */
-    protected function createUrl(string $url, array $params = []) : string
+    protected function createUrl($url, array $params = [])
     {
         if (null !== $this->baseUrl) {
             $url = "{$this->baseUrl}/$url";

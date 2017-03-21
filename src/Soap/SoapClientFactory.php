@@ -11,17 +11,12 @@ use Psr\Log\LoggerAwareTrait;
 /**
  * @author Emil Kilhage
  */
-class SoapClientFactory implements LoggerAwareInterface, ClientFactoryInterface
+class SoapClientFactory implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /** @var HttpSettingsManager */
     protected $settingsManager;
-
-    /**
-     * @var Proxy
-     */
-    private $proxy;
 
     /**
      * @var array
@@ -32,21 +27,11 @@ class SoapClientFactory implements LoggerAwareInterface, ClientFactoryInterface
     ];
 
     /**
-     * @param int $timeout
+     * @param HttpSettingsManager $settingsManager
      */
-    public function setTimeout($timeout)
+    public function setSettingsManager(HttpSettingsManager $settingsManager)
     {
-        ini_set('default_socket_timeout', $timeout);
-    }
-
-    /**
-     * Set the currently active global proxy, or null if no proxy is in use.
-     *
-     * @param Proxy $proxy
-     */
-    public function setProxy(Proxy $proxy)
-    {
-        $this->proxy = $proxy;
+        $this->settingsManager = $settingsManager;
     }
 
     /**
@@ -57,8 +42,7 @@ class SoapClientFactory implements LoggerAwareInterface, ClientFactoryInterface
     public function createClient($wsdl, array $options = [])
     {
         $options = $this->buildOptions($options);
-        $client = new \SoapClient($wsdl, $options);
-        return $client;
+        return new \SoapClient($wsdl, $options);
     }
 
     /**
@@ -69,19 +53,19 @@ class SoapClientFactory implements LoggerAwareInterface, ClientFactoryInterface
     {
         $defaults = $this->defaults;
 
-        $this->proxy = $this->settingsManager->getProxy();
+        $proxy = $this->settingsManager->getProxy();
 
         if (($timeout = $this->settingsManager->getTimeout())) {
-            $this->setTimeout($timeout);
+            ini_set('default_socket_timeout', $timeout);
         }
 
-        if (null !== $this->proxy) {
+        if (null !== $proxy) {
             $defaults = array_merge(
                 array_filter([
-                    'proxy_host' => $this->proxy->getHost(),
-                    'proxy_port' => $this->proxy->getPort(),
-                    'proxy_login' => $this->proxy->getUser(),
-                    'proxy_password' => $this->proxy->getPassword(),
+                    'proxy_host' => $proxy->getHost(),
+                    'proxy_port' => $proxy->getPort(),
+                    'proxy_login' => $proxy->getUser(),
+                    'proxy_password' => $proxy->getPassword(),
                 ]),
                 $defaults
             );
@@ -89,21 +73,4 @@ class SoapClientFactory implements LoggerAwareInterface, ClientFactoryInterface
 
         return array_merge($defaults, $options);
     }
-
-    /**
-     * @return HttpSettingsManager
-     */
-    public function getSettingsManager()
-    {
-        return $this->settingsManager;
-    }
-
-    /**
-     * @param HttpSettingsManager $settingsManager
-     */
-    public function setSettingsManager($settingsManager)
-    {
-        $this->settingsManager = $settingsManager;
-    }
-
 }

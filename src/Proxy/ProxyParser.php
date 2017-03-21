@@ -8,7 +8,7 @@ namespace Glooby\HttpClientBundle\Proxy;
 class ProxyParser
 {
 
-    const VALID_PROXY_REGEX = '/^((socks4|socks4a|socks5|socks5h):\/\/){0,1}[a-z0-9\.\-\_]+(:[0-9]+){0,1}$/i';
+    const VALID_PROXY_REGEX = '/^((socks4|socks4a|socks5|socks5h|http|https):\/\/){0,1}(.+:.*@)?[a-z0-9\.\-\_]+(:[0-9]+){0,1}$/i';
 
     /**
      * @param string $string

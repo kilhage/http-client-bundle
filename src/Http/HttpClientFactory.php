@@ -2,9 +2,7 @@
 
 namespace Glooby\HttpClientBundle\Http;
 
-use Glooby\HttpClientBundle\ClientFactoryInterface;
 use Glooby\HttpClientBundle\HttpSettingsManager;
-use Glooby\HttpClientBundle\Proxy\Proxy;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -16,45 +14,15 @@ use Psr\Log\LoggerAwareTrait;
  *      ssh:    ssh -D2345 user@host
  *      proxy:  socks5://127.0.0.1:2345
  */
-class HttpClientFactory implements LoggerAwareInterface, ClientFactoryInterface
+class HttpClientFactory implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /** @var HttpSettingsManager */
     protected $settingsManager;
 
-    /** @var Proxy The proxy to use for HTTP/HTTPS requests */
-    protected $proxy;
-
     /** @var array Default settings*/
     protected $defaults = [];
-
-    /**
-     * @param int $timeout
-     */
-    public function setTimeout($timeout)
-    {
-        $this->setDefault('timeout', $timeout);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    private function setDefault($key, $value)
-    {
-        $this->defaults[$key] = $value;
-    }
-
-    /**
-     * Set the currently active global proxy, or null if no proxy is in use.
-     *
-     * @param Proxy $proxy
-     */
-    public function setProxy(Proxy $proxy)
-    {
-        $this->proxy = $proxy;
-    }
 
     /**
      * @param array $config
@@ -125,15 +93,16 @@ class HttpClientFactory implements LoggerAwareInterface, ClientFactoryInterface
      */
     private function buildDefaults(array $config)
     {
-        if (($timeout = $this->settingsManager->getTimeout())) {
-            $this->defaults['timeout'] = $timeout;
-        }
-
         if (!array_key_exists('defaults', $config)) {
             $config['defaults'] = $this->defaults;
         } else {
             $config['defaults'] = array_merge($this->defaults, $config['defaults']);
         }
+
+        if (($timeout = $this->settingsManager->getTimeout())) {
+            $config['defaults']['timeout'] = $timeout;
+        }
+
         return $config;
     }
 
