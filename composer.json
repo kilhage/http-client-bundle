@@ -10,7 +10,7 @@
         }
     ],
     "autoload": {
-        "psr-4": { "Glooby\\ttpClientBundle\\": "src/" }
+        "psr-4": { "Glooby\\HttpClientBundle\\": "src/" }
     },
     "require": {
         "php": ">=5.6",
