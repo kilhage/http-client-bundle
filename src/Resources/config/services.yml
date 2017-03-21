@@ -10,31 +10,31 @@ parameters:
     glooby.http.timeout:  ~
 
 services:
-    glooby_api.http.client_factory:
+    glooby.http.client_factory:
         class: Glooby\HttpClientBundle\Http\HttpClientFactory
         calls:
             - [ setLogger,            [ '@logger' ]]
-            - [ setSettingsManager,   [ '@glooby_api.http.settings' ]]
+            - [ setSettingsManager,   [ '@glooby.http.settings' ]]
 
-    glooby_api.http.soap_client_factory:
+    glooby.http.soap_client_factory:
         class: Glooby\HttpClientBundle\Soap\SoapClientFactory
         calls:
             - [ setLogger,            [ '@logger' ]]
-            - [ setSettingsManager,   [ '@glooby_api.http.settings' ]]
+            - [ setSettingsManager,   [ '@glooby.http.settings' ]]
 
-    glooby_api.http.proxy_parser:
+    glooby.http.proxy_parser:
         class: Glooby\HttpClientBundle\Proxy\ProxyParser
 
-    glooby_api.http.settings:
+    glooby.http.settings:
         class: Glooby\HttpClientBundle\HttpSettingsManager
         calls:
-            - [setProxyParser,       ['@glooby_api.http.proxy_parser']]
+            - [setProxyParser,       ['@glooby.http.proxy_parser']]
             - [setProxy,             ['%glooby.http.proxy%']]
             - [setProxyFile,         ['%glooby.http.proxyfile%']]
             - [setTimeout,           ['%glooby.http.timeout%']]
 
-    glooby_api.http.client:
+    glooby.http.client:
         class: Glooby\HttpClientBundle\Http\HttpClient
         calls:
-            - [setHttpClientFactory, ['@glooby_api.http.client_factory']]
+            - [setHttpClientFactory, ['@glooby.http.client_factory']]
             - [setLogger, ['@logger']]

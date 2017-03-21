@@ -2,7 +2,7 @@
     "name": "glooby/http-client-bundle",
     "license": "MIT",
     "type": "symfony-bundle",
-    "description": "http-client-bundle",
+    "description": "Advanced http proxying",
     "authors": [
         {
             "name": "Emil Kilhage",

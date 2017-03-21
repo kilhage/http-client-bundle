@@ -2,13 +2,12 @@
 
 namespace Glooby\HttpClientBundle\Tests\Proxy;
 
-use Glooby\Api\CoreBundle\Tests\TestCase;
 use Glooby\HttpClientBundle\Proxy\ProxyParser;
 
 /**
  * @author Emil Kilhage
  */
-class ProxyParserTest extends TestCase
+class ProxyParserTest extends \PHPUnit_Framework_TestCase
 {
     public function test1()
     {
