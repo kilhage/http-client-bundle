@@ -28,14 +28,19 @@ class ProxyStatusCommand extends ContainerAwareCommand
         $settingsManager = $this->getContainer()->get('glooby.http.settings');
         $clientFactory = $this->getContainer()->get('glooby.http.client_factory');
 
-        $localIp = trim(file_get_contents('http://api.ipify.org'));
-        $activeIp = trim($clientFactory->createClient()->get('http://api.ipify.org')->getBody());
+        $local = json_decode(file_get_contents('http://ip-api.com/json'), true);
+        $active = json_decode($clientFactory->createClient()->get('http://ip-api.com/json')->getBody(), true);
 
         $output->writeln('<comment>Proxy status</comment>');
         $output->writeln(' - <info>Current proxy:</info>    ' . ($settingsManager->getLastProxy() ? : 'none'));
 
         $output->writeln('<comment>IP addresses</comment>');
-        $output->writeln(' - <info>Public IP:</info>        ' . $localIp);
-        $output->writeln(' - <info>Client public IP:</info> ' . $activeIp);
+        $output->writeln(' - <info>Public IP:</info>        ' . $local['query']);
+        $output->writeln(' - <info>Public City:</info>        ' . $local['city']);
+        $output->writeln(' - <info>Public Country:</info>        ' . $local['country']);
+
+        $output->writeln(' - <info>Client public IP:</info> ' . $active['query']);
+        $output->writeln(' - <info>Client public City:</info> ' . $active['city']);
+        $output->writeln(' - <info>Client public Country:</info> ' . $active['country']);
     }
 }
